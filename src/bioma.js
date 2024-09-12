@@ -1,13 +1,5 @@
 class Bioma {
 
-    static AnimaisEnum = {
-        LEAO: {especie: 'LEAO', tamanho: 3, habitat: 'savana', dieta: 'carnivoro'},
-        LEOPARDO: {especie: 'LEOPARDO', tamanho: 2, habitat: 'savana', dieta: 'carnivoro'},
-        CROCODILO: {especie: 'CROCODILO', tamanho: 3, habitat: 'rio', dieta: 'carnivoro'}, 
-        MACACO: {especie: 'MACACO', tamanho: 1, habitat: ['savana', 'floresta'], dieta: 'herbivoro'},
-        GAZELA: {especie: 'GAZELA', tamanho: 2, habitat: 'savana', dieta: 'herbivoro'},
-        HIPOPOTAMO: {especie: 'HIPOPOTAMO', tamanho: 4, habitat: ['savana', 'rio'], dieta: 'herbivoro'}
-    }
 
     constructor(numero, bioma, tamanho_total) {
         this.numero = numero;
@@ -35,11 +27,29 @@ class Bioma {
 
         if(bioma_animal_valido && this.recintoVazio() && checar_espaco) {
             this.adicionarAnimal(animal, quantidade);
+
+            if(this.temMaisDeUmaEspecie(animal)) {
+                this.tamanho_disponivel -= 1;            }
+            
+                return true;
         } else if(bioma_animal_valido && checar_espaco && dietas_iguais && animal.dieta == 'herbivoro') {
             this.adicionarAnimal(animal, quantidade);
-        }else if(bioma_animal_valido && checar_espaco && especies_iguais && dietas_iguais && animal.dieta == 'carnivoro') {
+            
+            if(this.temMaisDeUmaEspecie(animal)) {
+                this.tamanho_disponivel -= 1;            }
+            
+                return true;
+        } else if(bioma_animal_valido && checar_espaco && especies_iguais && dietas_iguais && animal.dieta == 'carnivoro') {
             this.adicionarAnimal(animal, quantidade);
-        } 
+            
+            if(this.temMaisDeUmaEspecie(animal)) {
+                this.tamanho_disponivel -= 1;            
+            }
+            
+                return true; 
+        } else {
+            return false;
+        }
     }
 
     adicionarAnimal(animal, quantidade) {
@@ -103,10 +113,10 @@ class Bioma {
         return this.animais_existentes.some(animal_lista => animal_lista.especie === animal.especie);
     }
 
-    temMaisDeUmaEspecie() { //verificar se há mais de uma especie no recinto, se sim, diminui em 1 ponto o tamanho disponível
-        if(this.animais_existentes.some(animal_lista => animal_lista.especie === animal_lista.especie)) {
-            this.tamanho_disponivel -= 1;
-        } 
+    temMaisDeUmaEspecie() { 
+        const especies = this.animais_existentes.map(animal => animal.especie);
+        const especiesUnicas = new Set(especies);
+        return especiesUnicas.size > 1;    
     }
 
     recintoAdequadadoParaMacaco(quantidade) { //refatorar para true ou false depois
